@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\CarouselItemsController;
 use App\Http\Controllers\API\MessageController;
 use App\Http\Controllers\API\UserController;
+use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\LoginController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,24 +18,79 @@ use App\Http\Controllers\API\UserController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//public API's
+//usr 11-16
 
-Route::get('/carousel', [CarouselItemsController::class, 'index']);
-Route::get('/carousel/{id}', [CarouselItemsController::class, 'show']);
-Route::post('/carousel', [CarouselItemsController::class, 'store']);
-Route::put('/carousel/{id}', [CarouselItemsController::class, 'update']);
-Route::delete('/carousel/{id}', [CarouselItemsController::class, 'destroy']);
+ //   Route::post('/login', [AuthController::class, 'login'])->name('user.login');
+    Route::post('/user',  'store'               )->name('user.store');
+
+
+
+/*protected API's
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+
+    Route::controller(CarouselItemsController::class)->group(function(){
+    Route::get('/carousel',             'index');
+    Route::get('/carousel/{id}',        'show');
+    Route::post('/carousel',            'store');
+    Route::put('/carousel/{id}',        'update');
+    Route::delete('/carousel/{id}',     'destroy');
+});
+*/
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::controller(UserController::class)->group(function(){
+    Route::get('/user',                 'index');
+    Route::get('/user/{id}',            'show');
+
+    Route::put('/user/{id}',            'update')->name('user.update');
+    Route::put('/user/email/{id}',      'email')->name('user.email');
+    Route::put('/user/password/{id}',   'password')->name('user.password');
+    Route::put('/user/image/{id}',      'image')->name('user.image');
+    Route::delete('/user/{id}',         'destroy');
+    });
+
+    //carsumart
+    
+    Route::post('/logout', [LoginController::class, 'logout']);
+});
+//carsumart
+Route::middleware(['web', 'auth:sanctum'])->group(function () {
+    
+
+});
+    Route::post('/register', [LoginController::class, 'register'])->name('user.register');
+    Route::post('/login', [LoginController::class, 'login'])->name('user.login');
+    
+
+
+
 
 
 //message activity
-Route::delete('/message/{id}', [MessageController::class, 'destroy']);
-Route::get('/message', [MessageController::class, 'index']);
-Route::get('/message/{id}', [MessageController::class, 'show']);
-Route::post('/message', [MessageController::class, 'store']);
-Route::put('/message/{id}', [MessageController::class, 'update']);
 
-Route::get('/user', [UserController::class, 'index']);
-Route::delete('/user/{id}', [UserController::class, 'destroy']);
+Route::controller(MessageController::class)->group(function () {
+    Route::delete('/message/{id}', 'destroy');
+    Route::get('/message', 'index');
+    Route::get('/message/{id}', 'show');
+    Route::post('/message', 'create');
+    Route::put('/message/{id}', 'update');
+    Route::get('/message/{id}', 'search');
 
+
+});
+
+// Route::delete('/message/{id}', [MessageController::class, 'destroy']);
+// Route::get('/message', [MessageController::class, 'index']);
+// Route::get('/message/{id}', [MessageController::class, 'show']);
+// Route::post('/message', [MessageController::class, 'store']);
+// Route::put('/message/{id}', [MessageController::class, 'update']);
+
+
+// Route::get('/user', [UserController::class, 'index']);
+// Route::get('/user/{id}', [UserController::class, 'show']);
+// Route::post('/user', [UserController::class, 'store'])->name('user.store');
+// Route::put('/user/{id}', [UserController::class, 'update'])->name('user.update');
+// Route::put('/user/email/{id}', [UserController::class, 'email'])->name('user.email');
+// Route::put('/user/password/{id}', [UserController::class, 'password'])->name('user.password');
+// Route::delete('/user/{id}', [UserController::class, 'destroy']);

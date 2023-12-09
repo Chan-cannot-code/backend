@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Http\Requests\UserRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -21,9 +24,14 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
-        //
+        $validated = $request->validated();
+        
+        $validated['password'] = Hash::make($validated['password']);
+        $user = User::create($validated);
+
+        return $user;
     }
 
     /**
@@ -31,16 +39,48 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return User::findOrFail($id);
     }
 
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UserRequest $request, string $id)
     {
-        //
+        $user = User::findorFail($id);
+        $validated = $request->validated();
+        $user->name = $validated['name'] ;
+ 
+        $user->save();
+        return $user;
+    }
+    /**
+     * Update the email specified resource in storage.
+     */
+    public function email(UserRequest $request, string $id)
+    {
+        $user = User::findorFail($id);
+        $validated = $request->validated();
+        $user->email = $validated['email'] ;
+ 
+        $user->save();
+        return $user;
+    }
+    /**
+     * Update the password of specified resource in storage.
+     */
+    public function password(UserRequest $request, string $id)
+    {
+        $user = User::findOrFail($id);
+        $validated = $request->validated();
+    
+        if (isset($validated['password'])) {
+            $user->password = Hash::make($validated['password']);
+            $user->save();
+        }
+    
+        return $user;
     }
 
     /**
@@ -52,6 +92,21 @@ class UserController extends Controller
  
         $user->delete();
 
+        return $user;
+    }
+
+    //update the image of specified resource from storage
+    public function image(UserRequest $request, string $id)
+    {
+        $user = User::findorFail($id);
+        if(!is_null($user->$image)){
+            Storage::disk('public')->delete('file.jpg');
+        }
+        $user -> $image = $request->file('image')->storePublicly('images', 'public');
+
+
+ 
+        $user->save();
         return $user;
     }
 }

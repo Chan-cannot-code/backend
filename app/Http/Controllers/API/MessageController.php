@@ -17,18 +17,23 @@ class MessageController extends Controller
         return Message::all();
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+
+
+    //search
+    public function search(String $id)
     {
-        //
+
+        return Message::findOrfail($id);
+
+
     }
+
+    
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(MessageRequest $request)
+    public function create(MessageRequest $request)
     {
         // Retrieve the validated input data...
         $validated = $request->validated();
@@ -40,12 +45,8 @@ class MessageController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
-    {
-        return Message::findOrfail($id);
-    }
 
-
+    //update
     public function update(MessageRequest $request, string $id)
     {
         $validated = $request->validated();
@@ -57,6 +58,7 @@ class MessageController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+    //destroy
     public function destroy(string $id)
     {
         $message = Message::findOrFail($id);
