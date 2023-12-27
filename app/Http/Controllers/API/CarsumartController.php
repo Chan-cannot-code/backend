@@ -42,6 +42,4 @@ class CarsumartController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
     }
-
-    
 }
