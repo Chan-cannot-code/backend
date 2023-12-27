@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('name')->change('fullname');
-            $table->string('email')->change('custom_email');
-            
+        Schema::create('transactions', function (Blueprint $table) {
+            $table->id();
+            $table->date('date');
+            $table->integer('amount');
+            $table->string('status');
         });
     }
-    
 
     /**
      * Reverse the migrations.

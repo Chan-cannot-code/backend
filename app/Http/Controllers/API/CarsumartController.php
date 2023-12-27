@@ -25,6 +25,4 @@ class CarsumartController extends Controller
         $user->save();
         return $user;
     }
-
-    
 }

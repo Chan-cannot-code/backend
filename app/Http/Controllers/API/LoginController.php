@@ -18,13 +18,13 @@ class LoginController extends Controller
         // Validation rules
         $rules = [
             'fullname' => 'required|string|max:255',
-            'custom_email' => 'required|string|email|max:255|unique:users',
-            'school_id' => 'required|string|max:255|unique:users',
+            'custom_email' => 'required|string|email|max:255',
+            'school_id' => 'required|string|max:255',
             'password' => 'required|string|min:8',
         ];
-    
+
         // Custom messages for validation
-        $messages = [
+        $user = [
             'fullname.required' => 'Please enter your full name.',
             'custom_email.required' => 'Please enter your email address.',
             'custom_email.unique' => 'This email address is already registered.',
@@ -33,14 +33,21 @@ class LoginController extends Controller
             'password.required' => 'Please enter your password.',
             'password.min' => 'Your password must be at least 8 characters long.',
         ];
-    
+
         // Validate the data
-        $validator = Validator::make($data->all(), $rules, $messages);
-    
+        $validator = Validator::make($data->all(), $rules, $user);
+
         if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 400);
+            return response()->json(
+                [
+                    'status' => 'error',
+                    'errors' => $validator->errors(),
+                    'message' => 'Error creating account'
+                ],
+                400
+            );
         }
-    
+
         try {
             $user = LoginCredential::create([
                 'fullname' => $data['fullname'],
@@ -48,29 +55,35 @@ class LoginController extends Controller
                 'school_id' => $data['school_id'],
                 'password' => Hash::make($data['password']),
             ]);
-    
+
             return response()->json(['user' => $user, 'message' => 'Registration successful'], 201);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Registration failed'], 500);
         }
     }
-    
-    public function login(RegisterRequest $request)
+
+    public function login(Request $request)
     {
         $user = LoginCredential::where('school_id', $request->school_id)->first();
-     
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        $response = [
-            'user' => $user,
-            'token' => $user->createToken($request->school_id)->plainTextToken
-        ];
-     
-        return $response;
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Logged in successful',
+            'user' => $user
+        ], 200);
+
+        // $response = [
+        //     'user' => $user,
+        //     'token' => $user->createToken($request->school_id)->plainTextToken
+        // ];
+
+        // return $response;
     }
 
     public function logout(Request $request)
@@ -85,7 +98,7 @@ class LoginController extends Controller
                 'message' => 'User not authenticated',
             ];
         }
-    
+
         return response()->json($response);
     }
     
