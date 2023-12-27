@@ -1,3 +1,10 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+
 class RegisterRequest extends FormRequest
 {
     /**
@@ -30,6 +37,14 @@ class RegisterRequest extends FormRequest
                 'password'   => 'required|string|min:8|confirmed',
             ];
             }
-
+        
+        else if ( request()->routeIs('user.addProduct')){
+            return [
+                'pname'       => 'nullable|string|max:255',
+                'description'      => 'nullable|string|max:255',
+                'price'   => 'required|string|min:8', 
+                'image'       =>  'required|image|mimes:jpg,bmp,png|max:2048'          
+            ];
+            }   
     }
 }

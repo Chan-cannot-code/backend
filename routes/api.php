@@ -22,7 +22,7 @@ use App\Http\Controllers\API\LoginController;
 //usr 11-16
 
  //   Route::post('/login', [AuthController::class, 'login'])->name('user.login');
-    Route::post('/user',  'store'               )->name('user.store');
+ //   Route::post('/user',  'store'               )->name('user.store');
 
 
 
@@ -49,6 +49,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/user/image/{id}',      'image')->name('user.image');
     Route::delete('/user/{id}',         'destroy');
     });
+
+    //user specific APIS
+    Route::put('/user/addProduct', [CarsumartController::class, 'addPProduct'])->name('user.addProduct');
 
     //carsumart
     
