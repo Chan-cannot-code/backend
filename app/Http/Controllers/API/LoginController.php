@@ -67,6 +67,13 @@ class LoginController extends Controller
     {
         $user = LoginCredential::where('school_id', $request->school_id)->first();
 
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'user does not exist'
+            ], 404);
+        }
+
 
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(
@@ -93,7 +100,7 @@ class LoginController extends Controller
 
     public function logout(Request $request)
     {
-         $request
+        $request
             ->user()
             ->currentAccessToken()
             ->delete();
