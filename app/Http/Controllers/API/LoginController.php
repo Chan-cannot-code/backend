@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use App\Http\Requests\RegisterRequest;
 use App\Models\LoginCredential;
 use Tymon\JWTAuth\Facades\JWTAuth; // Assuming you're using JWT for authentication
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -66,40 +67,44 @@ class LoginController extends Controller
     {
         $user = LoginCredential::where('school_id', $request->school_id)->first();
 
+
         if (!$user || !Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+            return response()->json(
+                [
+                    "status" => 'error',
+                    'message' => 'Login credentials are invalid',
+                ],
+                403
+            );
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Logged in successful',
-            'user' => $user
-        ], 200);
+        $token = $user->createToken('auth_token')->plainTextToken;
 
-        // $response = [
-        //     'user' => $user,
-        //     'token' => $user->createToken($request->school_id)->plainTextToken
-        // ];
-
-        // return $response;
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => 'Logged in successful',
+                'user' => $user,
+                'token' => $token
+            ],
+            200
+        );
     }
 
     public function logout(Request $request)
     {
-        if ($request->user()) {
-            $request->user()->tokens()->delete();
-            $response = [
-                'message' => 'logout'
-            ];
-        } else {
-            $response = [
-                'message' => 'User not authenticated',
-            ];
-        }
+         $request
+            ->user()
+            ->currentAccessToken()
+            ->delete();
 
-        return response()->json($response);
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => 'Logged out successfully',
+            ],
+            200
+        );
     }
-    
+
 }

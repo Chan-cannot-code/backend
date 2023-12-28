@@ -17,10 +17,10 @@ class AuthController extends Controller
     public function login(UserRequest $request)
     {
 
-     
+
         $user = User::where('email', $request->email)->first();
-     
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
@@ -28,9 +28,9 @@ class AuthController extends Controller
 
         $response = [
             'user' => $user,
-            'token' => $user->createToken($request->email)->plainTextToken
+            'token' => $user->createToken('auth_token')->plainTextToken
         ];
-     
+
         return $response;
     }
 
@@ -41,7 +41,7 @@ class AuthController extends Controller
     {
         $request->user()->tokens()->delete();
         $response = [
-            'message'=> 'logout'
+            'message' => 'logout'
         ];
         return $response;
     }

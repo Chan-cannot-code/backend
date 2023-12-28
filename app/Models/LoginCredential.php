@@ -13,6 +13,11 @@ class LoginCredential extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $table = 'login_credentials';
+    protected $guarded = [];
+
+
+    public $incrementing = false;
+
 
     protected $primaryKey = 'school_id';
 
@@ -32,4 +37,14 @@ class LoginCredential extends Model
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(LoginCredential::class, 'school_id');
+    }
+
+    public function products()
+    {
+        return $this->belongsTo(Products::class, 'product');
+    }
 }
