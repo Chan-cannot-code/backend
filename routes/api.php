@@ -24,6 +24,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // carsumart product controllers
     Route::controller(ProductController::class)->group(function () {
         Route::post('/add-item', 'AddProduct');
+        Route::post('/update-product/{id}', 'updateProductListings');
         Route::get('/display-user-listing/{id}', 'displayUserListings');
         Route::delete('/delete-user-listing/{id}', 'deleteProductListings');
     });
