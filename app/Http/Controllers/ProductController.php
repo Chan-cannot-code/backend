@@ -16,14 +16,13 @@ class ProductController extends Controller
             'description' => 'nullable',
             'price' => 'required|numeric',
             'quantity' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:2048',
             'category' => 'required',
         ]);
 
         $user = $request->user();
         $quantity = $request->input('quantity', 0);
 
-        // Initialize $filename with a default value
         $filename = null;
 
         $validatedData = [
@@ -86,6 +85,23 @@ class ProductController extends Controller
         );
     }
 
+    public function displaySelectedProduct(string $id)
+    {
+        $response = Products::where('product_id', '=', $id)->get();
+        
+        foreach ($response as $product) {
+            $product->image_url = asset("storage/images/{$product->image}");
+        }
+
+        return response()->json(
+            [
+                'status' => 'success',
+                'message' => 'retrieved product information',
+                'data' => $response
+            ], 200
+        );
+    }
+
     // delete product from listing
     public function deleteProductListings(string $id)
     {
@@ -109,7 +125,7 @@ class ProductController extends Controller
             'description' => 'nullable',
             'price' => 'required|numeric',
             'quantity' => 'required',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
             'category' => 'required',
         ]);
 

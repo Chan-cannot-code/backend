@@ -26,6 +26,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/add-item', 'AddProduct');
         Route::post('/update-product/{id}', 'updateProductListings');
         Route::get('/display-user-listing/{id}', 'displayUserListings');
+        Route::get('/display-selected-product/{id}', 'displaySelectedProduct');
         Route::delete('/delete-user-listing/{id}', 'deleteProductListings');
     });
 
