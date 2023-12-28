@@ -19,8 +19,8 @@ class LoginController extends Controller
         // Validation rules
         $rules = [
             'fullname' => 'required|string|max:255',
-            'custom_email' => 'required|string|email|max:255',
-            'school_id' => 'required|string|max:255',
+            'custom_email' => 'required|string|email|max:255|unique:login_credentials,custom_email',
+            'school_id' => 'required|string|max:255|unique:login_credentials,school_id',
             'password' => 'required|string|min:8',
         ];
 
@@ -28,6 +28,7 @@ class LoginController extends Controller
         $user = [
             'fullname.required' => 'Please enter your full name.',
             'custom_email.required' => 'Please enter your email address.',
+            'custom_email.email' => 'Please enter a valid email address.',
             'custom_email.unique' => 'This email address is already registered.',
             'school_id.required' => 'Please enter your school ID.',
             'school_id.unique' => 'This school ID is already registered.',
@@ -49,19 +50,25 @@ class LoginController extends Controller
             );
         }
 
-        try {
-            $user = LoginCredential::create([
-                'fullname' => $data['fullname'],
-                'custom_email' => $data['custom_email'],
-                'school_id' => $data['school_id'],
-                'password' => Hash::make($data['password']),
-            ]);
+        // Create the user
+        $user = LoginCredential::create([
+            'fullname' => $data['fullname'],
+            'custom_email' => $data['custom_email'],
+            'school_id' => $data['school_id'],
+            'password' => Hash::make($data['password']),
+        ]);
 
-            return response()->json(['user' => $user, 'message' => 'Registration successful'], 201);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Registration failed'], 500);
-        }
+        return response()->json(
+            [
+                'status' => 'success',
+                'user' => $user,
+                'message' => 'Registration successful'
+            ],
+            201
+        );
     }
+
+
 
     public function login(Request $request)
     {
