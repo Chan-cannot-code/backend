@@ -5,12 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator; // Add this line for Validator
-use Illuminate\Validation\ValidationException;
-use App\Http\Requests\RegisterRequest;
+use Illuminate\Support\Facades\Validator;
 use App\Models\LoginCredential;
-use Tymon\JWTAuth\Facades\JWTAuth; // Assuming you're using JWT for authentication
-use Illuminate\Support\Facades\Auth;
+
 
 class LoginController extends Controller
 {

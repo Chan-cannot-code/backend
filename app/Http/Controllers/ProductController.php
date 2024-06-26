@@ -20,6 +20,11 @@ class ProductController extends Controller
             'category' => 'required',
         ]);
 
+            // Validate the request data
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()], 400);
+        }
+
         $user = $request->user();
         $quantity = $request->input('quantity', 0);
 
@@ -88,7 +93,7 @@ class ProductController extends Controller
     public function displaySelectedProduct(string $id)
     {
         $response = Products::where('product_id', '=', $id)->get();
-        
+
         foreach ($response as $product) {
             $product->image_url = asset("storage/images/{$product->image}");
         }
@@ -117,6 +122,19 @@ class ProductController extends Controller
             'message' => 'Deleted product from user listings',
         ], 200);
     }
+
+    // returns the product depending on its category
+    public function getProductCategory(Request $request, string $id) {
+        $products = Products::where('category', $id)->get();
+        foreach ($products as $product) {
+            $product->image_url = asset("storage/images/{$product->image}");
+        }
+        return response()->json([
+            'products' => $products
+        ], 200);
+    }
+
+
 
     public function updateProductListings(Request $request, string $id)
     {

@@ -15,7 +15,7 @@ Route::post('/register', [LoginController::class, 'register'])->name('user.regis
 Route::post('/login', [LoginController::class, 'login'])->name('user.login');
 
 // display all the listed products
-Route::get('/display-products', [ProductController::class, 'DisplayAllItems']);
+Route::get('/display-products', [ProductController::class, 'DisplayAllItems']);Route::get('/get-product-category/{id}', [ProductController::class, 'getProductCategory']);
 
 
 // sanctum middleware
